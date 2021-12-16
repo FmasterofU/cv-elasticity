@@ -2,7 +2,9 @@ version: '3.8'
 services:
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    build:
+      context: .
+      dockerfile: BuildElasticSearch.dockerfile
     environment:
       - discovery.type=single-node
     ports:
