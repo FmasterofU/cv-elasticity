@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+
+  elasticsearch:
+    image: elasticsearch:7.16.1
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - elk_net
+
+  logstash:
+    image: logstash:7.16.1
+    networks:
+      - elk_net
+
+  kibana:
+    image: kibana:7.16.1
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    networks:
+      - elk_net
+
+networks:
+  elk_net:
