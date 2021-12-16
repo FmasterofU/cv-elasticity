@@ -2,7 +2,7 @@ version: '3.8'
 services:
 
   elasticsearch:
-    image: elasticsearch:7.16.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
     environment:
       - discovery.type=single-node
     ports:
@@ -12,16 +12,26 @@ services:
       - elk_net
 
   logstash:
-    image: logstash:7.16.1
+    image: docker.elastic.co/logstash/logstash:7.4.0
     networks:
       - elk_net
 
   kibana:
-    image: kibana:7.16.1
+    image: docker.elastic.co/kibana/kibana:7.4.0
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
       - 5601:5601
+    networks:
+      - elk_net
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.4.0
+    environment:
+      - setup.kibana.host=kibana:5601
+      - output.elasticsearch.hosts=["elasticsearch:9200"]
+      #- cloud.id=<Cloud ID from Elasticsearch Service>
+      #- cloud.auth=elastic:<elastic password>
     networks:
       - elk_net
 
