@@ -32,8 +32,6 @@ services:
     environment:
       - setup.kibana.host=kibana:5601
       - output.elasticsearch.hosts=["elasticsearch:9200"]
-      #- cloud.id=<Cloud ID from Elasticsearch Service>
-      #- cloud.auth=elastic:<elastic password>
     networks:
       - elk_net
 
