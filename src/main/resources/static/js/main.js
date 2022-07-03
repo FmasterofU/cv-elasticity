@@ -9,6 +9,15 @@ $(document).ready(function () {
 
     });
     
+    $("#btnCvByNameAndSurname").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        searchCvByNameAndSurname();
+
+    });
+    
     $("#btnSubmitLuceneQueryLanguage").click(function (event) {
 
         //stop submit the form, we will post it manually.
@@ -64,6 +73,40 @@ function uploadData() {
     });
 
 }
+
+
+function searchCvByNameAndSurname() {
+	var name = $('#cvByNameAndSurname input[name=name]').val();
+	var surname = $('#cvByNameAndSurname input[name=surname]').val();
+    var data = JSON.stringify({"name":name, "surname":surname});
+    $("#btnCvByNameAndSurname").prop("disabled", true);
+
+    $.ajax({
+        type: "POST",
+        url: "/search/cv/name",
+        data: data,
+        contentType: 'application/json',
+        success: function (data) {
+        	$('#result').empty();
+            for(index = 0; index < data.length; index++){
+                var result = data[index]
+                $('#result').append('<li>' + result + '</li>');
+            }
+            console.log("SUCCESS : ", data);
+            $("#btnCvByNameAndSurname").prop("disabled", false);
+
+        },
+        error: function (e) {
+        	$('#result').empty();
+            $("#result").text(e.responseText);
+            console.log("ERROR : ", e);
+            $("#btnCvByNameAndSurname").prop("disabled", false);
+
+        }
+    });
+}
+
+
 
 function searchLuceneQueryLanguage() {
 

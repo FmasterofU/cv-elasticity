@@ -8,7 +8,11 @@ import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.IndexUnit;
 
 public interface UnitRepository extends ElasticsearchRepository<IndexUnit, String> {
 
-	//List<IndexUnit> findByTitle(String title);
+	List<IndexUnit> findByName(String name);
+	
+	List<IndexUnit> findBySurname(String surname);
+
+	List<IndexUnit> findByNameAndSurname(String name, String surname);
 
 	IndexUnit findByFilename(String filename);
 }

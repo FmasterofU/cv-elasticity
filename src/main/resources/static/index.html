@@ -8,6 +8,12 @@
 	</head>
 	<body>
 	
+		<h1>Result</h1>
+		<pre>
+		    <span id="result"></span>
+		</pre>	
+	
+	
 		<h1>Upload</h1>
 		
 		<form method="POST" enctype="multipart/form-data" id="fileUploadForm">
@@ -22,6 +28,18 @@
 		    <input type="file" name="files"/><br/><br/>
 		    <input type="submit" value="Submit" id="btnSubmit"/>
 		</form>
+
+		<h1>Search for CVs by name and Surname</h1>
+
+		<form method="POST" id="cvByNameAndSurname">
+		    <input type="text" name="name" placeholder="name"/><br/><br/>
+		    <input type="text" name="surname" placeholder="surname"/><br/><br/>
+		    <input type="submit" value="Submit" id="btnCvByNameAndSurname"/>
+		</form>
+
+
+
+
 		
 		<h1>Search using Lucene query language</h1>
 		
@@ -37,11 +55,6 @@
 		    <input type="text" name="value" placeholder="value" /><br/><br/>
 		    <input type="submit" value="Submit" id="btnSubmitLuceneTermQuery"/>
 		</form>
-		
-		<h1>Result</h1>
-		<pre>
-		    <span id="result"></span>
-		</pre>
 	
 	</body>
 </html>
