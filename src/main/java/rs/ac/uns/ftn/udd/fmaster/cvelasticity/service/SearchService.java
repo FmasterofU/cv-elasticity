@@ -6,4 +6,5 @@ public interface SearchService {
 
 	List<String> findAllCVsByNameAndSurname(String name, String surname) throws Exception;
 	List<String> findAllCVsByEducation(String level, String grade) throws Exception;
+	List<String> findAllCVsByTerms(String data) throws Exception;
 }

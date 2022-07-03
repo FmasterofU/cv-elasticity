@@ -3,6 +3,9 @@ package rs.ac.uns.ftn.udd.fmaster.cvelasticity.model;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Education {
 	
 	@Field(analyzer = "serbian", searchAnalyzer = "serbian", type = FieldType.Text, store = true)

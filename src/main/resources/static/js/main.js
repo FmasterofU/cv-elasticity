@@ -27,6 +27,15 @@ $(document).ready(function () {
 
     });
     
+    $("#btnCvByTerms").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        searchCvByTerms();
+
+    });
+    
     $("#btnSubmitLuceneQueryLanguage").click(function (event) {
 
         //stop submit the form, we will post it manually.
@@ -141,6 +150,35 @@ function searchCvByEducation() {
             $("#result").text(e.responseText);
             console.log("ERROR : ", e);
             $("#btnCvByEducation").prop("disabled", false);
+
+        }
+    });
+}
+
+function searchCvByTerms() {
+	var data = $('#cvByTerms input[name=terms]').val();
+    $("#btnCvByTerms").prop("disabled", true);
+
+    $.ajax({
+        type: "POST",
+        url: "/search/cv/terms",
+        data: data,
+        contentType: 'application/json',
+        success: function (data) {
+        	$('#result').empty();
+            for(index = 0; index < data.length; index++){
+                var result = data[index]
+                $('#result').append('<li>' + result + '</li>');
+            }
+            console.log("SUCCESS : ", data);
+            $("#btnCvByTerms").prop("disabled", false);
+
+        },
+        error: function (e) {
+        	$('#result').empty();
+            $("#result").text(e.responseText);
+            console.log("ERROR : ", e);
+            $("#btnCvByTerms").prop("disabled", false);
 
         }
     });

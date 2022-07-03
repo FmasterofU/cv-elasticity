@@ -5,17 +5,34 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpHost;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.IndexUnit;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.repository.UnitRepository;
 
+@SuppressWarnings("deprecation")
 @Service
 public class SearchServiceImpl implements SearchService {
 
 	@Autowired
 	UnitRepository repository;
+	
+	private RestHighLevelClient client = new RestHighLevelClient(
+			RestClient.builder(new HttpHost("localhost", 9200, "http"), new HttpHost("localhost", 9300, "http")));;
 	
 	private String toHexString(byte[] ba) {
 	    StringBuilder str = new StringBuilder();
@@ -70,6 +87,31 @@ public class SearchServiceImpl implements SearchService {
 		for(IndexUnit indexUnit : units)
 			ret.add("id: " + hash(indexUnit.getFilename()) + "\nname: " + indexUnit.getName() + "\nsurname: " + indexUnit.getSurname() + "\neducation level: " + indexUnit.getEducation().getEducationlevel() + "\neducation grade: " + indexUnit.getEducation().getEducationgrade() + "\nCV: \n" + indexUnit.getCvtext());
 		return ret;
+	}
+
+	@Override
+	public List<String> findAllCVsByTerms(String data) throws Exception {
+		QueryStringQueryBuilder queryBuilder = new QueryStringQueryBuilder(data);
+		queryBuilder.defaultField("cvtext");
+		queryBuilder.defaultOperator(Operator.AND);
+		List<IndexUnit> result = search(queryBuilder);
+		List<String> ret = new ArrayList<String>();
+		for(IndexUnit indexUnit : result)
+			ret.add("id: " + hash(indexUnit.getFilename()) + "\nname: " + indexUnit.getName() + "\nsurname: " + indexUnit.getSurname() + "\nCV: \n" + indexUnit.getCvtext());
+		return ret;
+	}
+	
+	private List<IndexUnit> search(QueryBuilder queryBuilder) throws Exception {
+		ArrayList<IndexUnit> units = new ArrayList<IndexUnit>();
+		SearchRequest searchRequest = new SearchRequest(IndexUnit.INDEX_NAME);
+		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+		sourceBuilder.query(queryBuilder);
+		searchRequest.source(sourceBuilder);
+		SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+		SearchHit[] searchHits = searchResponse.getHits().getHits();
+		for(SearchHit hit : searchHits)
+			units.add(new ObjectMapper().convertValue(hit.getSourceAsMap(), IndexUnit.class));
+		return units;
 	}
 
 }

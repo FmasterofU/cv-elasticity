@@ -20,12 +20,17 @@ public class SearchController {
 	SearchService search;
 	
 	@PostMapping(value="/search/cv/name", consumes="application/json")
-	public ResponseEntity<List<String>> searchTermQuery(@RequestBody NameAndSurname data) throws Exception {
+	public ResponseEntity<List<String>> searchNameAndSurname(@RequestBody NameAndSurname data) throws Exception {
 		return new ResponseEntity<List<String>>(search.findAllCVsByNameAndSurname(data.getName(), data.getSurname()), HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/search/cv/education", consumes="application/json")
-	public ResponseEntity<List<String>> searchTermQuery(@RequestBody Education data) throws Exception {
+	public ResponseEntity<List<String>> searchEducation(@RequestBody Education data) throws Exception {
 		return new ResponseEntity<List<String>>(search.findAllCVsByEducation(data.getEducationlevel(), data.getEducationgrade()), HttpStatus.OK);
+	}
+	
+	@PostMapping(value="/search/cv/terms", consumes="application/json")
+	public ResponseEntity<List<String>> searchCV(@RequestBody String data) throws Exception {
+		return new ResponseEntity<List<String>>(search.findAllCVsByTerms(data), HttpStatus.OK);
 	}
 }

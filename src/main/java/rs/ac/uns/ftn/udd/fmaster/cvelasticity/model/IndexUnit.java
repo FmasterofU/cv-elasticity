@@ -5,6 +5,9 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Document(indexName = IndexUnit.INDEX_NAME, shards = 1, replicas = 0)
 public class IndexUnit {
 
