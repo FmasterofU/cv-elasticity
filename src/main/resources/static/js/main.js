@@ -44,6 +44,15 @@ $(document).ready(function () {
         searchComplexQuery();
 
     });
+
+    $("#btnGeoSearch").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        searchGeoSearch();
+
+    });
     
     $("#btnSubmitLuceneQueryLanguage").click(function (event) {
 
@@ -217,6 +226,37 @@ function searchComplexQuery() {
             $("#result").text(e.responseText);
             console.log("ERROR : ", e);
             $("#btnComplexQuery").prop("disabled", false);
+
+        }
+    });
+}
+
+function searchGeoSearch() {
+	var city = $('#geoSearch input[name=city]').val();
+	var radius = $('#geoSearch input[name=radius]').val();
+    var data = JSON.stringify({"city":city, "radius":radius});
+    $("#btnGeoSearch").prop("disabled", true);
+
+    $.ajax({
+        type: "POST",
+        url: "/search/nearby",
+        data: data,
+        contentType: 'application/json',
+        success: function (data) {
+        	$('#result').empty();
+            for(index = 0; index < data.length; index++){
+                var result = data[index]
+                $('#result').append('<li>' + result + '</li>');
+            }
+            console.log("SUCCESS : ", data);
+            $("#btnGeoSearch").prop("disabled", false);
+
+        },
+        error: function (e) {
+        	$('#result').empty();
+            $("#result").text(e.responseText);
+            console.log("ERROR : ", e);
+            $("#btnGeoSearch").prop("disabled", false);
 
         }
     });

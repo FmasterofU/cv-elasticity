@@ -12,7 +12,10 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.geo.GeoPoint;
+import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -164,6 +167,16 @@ public class SearchServiceImpl implements SearchService {
 		List<String> ret = new ArrayList<String>();
 		for(IndexUnit indexUnit : result)
 			ret.add("id: " + hash(indexUnit.getFilename()) + "\nname: " + indexUnit.getName() + "\nsurname: " + indexUnit.getSurname() + "\neducation level: " + indexUnit.getEducation().getEducationlevel() + "\neducation grade: " + indexUnit.getEducation().getEducationgrade() + "\nCV: \n" + indexUnit.getCvtext());
+		return ret;
+	}
+
+	@Override
+	public List<String> findAllByGeoSearch(Integer radius, GeoPoint geo) throws Exception {
+		QueryBuilder queryBuilder = QueryBuilders.geoDistanceQuery("geo").distance(radius, DistanceUnit.KILOMETERS).point(geo.getLat(), geo.getLon());
+		List<IndexUnit> result = search(queryBuilder);
+		List<String> ret = new ArrayList<String>();
+		for(IndexUnit indexUnit : result)
+			ret.add("id: " + hash(indexUnit.getFilename()) + "\nname: " + indexUnit.getName() + "\nsurname: " + indexUnit.getSurname() + "\nlocation: " + indexUnit.getAddress() + ", " + indexUnit.getZipcode() + " " + indexUnit.getCity() + "\nCV: \n" + indexUnit.getCvtext());
 		return ret;
 	}
 

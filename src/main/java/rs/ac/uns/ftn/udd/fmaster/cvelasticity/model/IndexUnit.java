@@ -1,9 +1,11 @@
 package rs.ac.uns.ftn.udd.fmaster.cvelasticity.model;
 
+import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.GeoPointField;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -28,11 +30,8 @@ public class IndexUnit {
 	@Field(analyzer = "serbian", searchAnalyzer = "serbian", type = FieldType.Nested, store = true)
 	private Education education;
 	
-	@Field(type = FieldType.Double, store = true)
-	private Double latitude;
-	
-	@Field(type = FieldType.Double, store = true)
-	private Double longitude;
+	@GeoPointField
+	private GeoPoint geo;
 	
 	@Field(analyzer = "serbian", searchAnalyzer = "serbian", type = FieldType.Text, store = true)
 	private String cvtext;
@@ -41,11 +40,8 @@ public class IndexUnit {
 	@Field(type = FieldType.Text, searchAnalyzer = "serbian", store = true)
 	private String filename;
 	
-	@Field(type = FieldType.Double, store = true)
-	private Double iplatitude;
-	
-	@Field(type = FieldType.Double, store = true)
-	private Double iplongitude;
+	@GeoPointField
+	private GeoPoint ipgeo;
 	
 	@Field(type = FieldType.Text, store = true)
 	private String ip;
@@ -99,20 +95,20 @@ public class IndexUnit {
 		this.education = education;
 	}
 
-	public Double getLatitude() {
-		return latitude;
+	public GeoPoint getGeo() {
+		return geo;
 	}
 
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
+	public void setGeo(GeoPoint geo) {
+		this.geo = geo;
 	}
 
-	public Double getLongitude() {
-		return longitude;
+	public GeoPoint getIpgeo() {
+		return ipgeo;
 	}
 
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
+	public void setIpgeo(GeoPoint ipgeo) {
+		this.ipgeo = ipgeo;
 	}
 
 	public String getCvtext() {
@@ -129,22 +125,6 @@ public class IndexUnit {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
-	}
-
-	public Double getIplatitude() {
-		return iplatitude;
-	}
-
-	public void setIplatitude(Double iplatitude) {
-		this.iplatitude = iplatitude;
-	}
-
-	public Double getIplongitude() {
-		return iplongitude;
-	}
-
-	public void setIplongitude(Double iplongitude) {
-		this.iplongitude = iplongitude;
 	}
 
 	public String getAddress() {

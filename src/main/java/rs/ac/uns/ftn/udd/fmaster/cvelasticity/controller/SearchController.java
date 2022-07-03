@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.GeoSearch;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.NameAndSurname;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.Education;
+import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.IndexUnit;
+import rs.ac.uns.ftn.udd.fmaster.cvelasticity.service.IndexUnitService;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.service.SearchService;
 
 @RestController
@@ -18,6 +21,8 @@ public class SearchController {
 
 	@Autowired
 	SearchService search;
+	@Autowired
+	private IndexUnitService indexUnitService;
 	
 	@PostMapping(value="/search/cv/name", consumes="application/json")
 	public ResponseEntity<List<String>> searchNameAndSurname(@RequestBody NameAndSurname data) throws Exception {
@@ -37,5 +42,14 @@ public class SearchController {
 	@PostMapping(value="/search/bool", consumes="application/json")
 	public ResponseEntity<List<String>> searchBool(@RequestBody String data) throws Exception {
 		return new ResponseEntity<List<String>>(search.findAllByBooleanQuery(data), HttpStatus.OK);
+	}
+	
+	@PostMapping(value="/search/nearby", consumes="application/json")
+	public ResponseEntity<List<String>> searchNearby(@RequestBody GeoSearch data) throws Exception {
+		IndexUnit unit = new IndexUnit();
+		unit.setCity(data.getCity());
+		unit.setAddress("");
+		unit.setZipcode("");
+		return new ResponseEntity<List<String>>(search.findAllByGeoSearch(data.getRadius(), indexUnitService.calculateGeocodedLongLat(unit).getGeo()), HttpStatus.OK);
 	}
 }

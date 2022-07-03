@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,8 +50,7 @@ public class IndexUnitServiceImpl implements IndexUnitService {
 			return unit;
 		}
 		
-		unit.setIplatitude(result.getLatitude());
-		unit.setIplongitude(result.getLongitude());
+		unit.setIpgeo(new GeoPoint(result.getLatitude(), result.getLongitude()));
 		
 		return unit;
 	}
@@ -94,8 +94,7 @@ public class IndexUnitServiceImpl implements IndexUnitService {
 		}
 		
 		try {
-			unit.setLongitude(Double.parseDouble(result[0].getLon()));
-			unit.setLatitude(Double.parseDouble(result[0].getLat()));
+			unit.setGeo(new GeoPoint(Double.parseDouble(result[0].getLat()), Double.parseDouble(result[0].getLon())));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return unit;

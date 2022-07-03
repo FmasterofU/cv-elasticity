@@ -55,8 +55,16 @@
 		<h1>Search with complex query</h1>
 
 		<form method="POST" id="complexQuery">
-		    <input type="text" name="query" placeholder="cvtext:ratata && name:Igor B || educationlevel:master"/><br/><br/>
+		    <input type="text" size="50" name="query" placeholder="cvtext:ratata && name:Igor B || educationlevel:master"/><br/><br/>
 		    <input type="submit" value="Submit" id="btnComplexQuery"/>
+		</form>
+		
+		<h1>GeoSearch for applications</h1>
+
+		<form method="POST" id="geoSearch">
+		    <input type="text" name="city" placeholder="city"/><br/><br/>
+		    <input type="number" name="radius" placeholder="radius"/><br/><br/>
+		    <input type="submit" value="Submit" id="btnGeoSearch"/>
 		</form>
 		
 		<h1>Search using Lucene query language</h1>
