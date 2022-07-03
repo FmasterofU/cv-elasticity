@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.Field;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.GeoSearch;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.NameAndSurname;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.Education;
@@ -51,5 +52,10 @@ public class SearchController {
 		unit.setAddress("");
 		unit.setZipcode("");
 		return new ResponseEntity<List<String>>(search.findAllByGeoSearch(data.getRadius(), indexUnitService.calculateGeocodedLongLat(unit).getGeo()), HttpStatus.OK);
+	}
+	
+	@PostMapping(value="/search/phrase", consumes="application/json")
+	public ResponseEntity<List<String>> searchPhrase(@RequestBody Field data) throws Exception {
+		return new ResponseEntity<List<String>>(search.findAllByPhraseQuery(data), HttpStatus.OK);
 	}
 }

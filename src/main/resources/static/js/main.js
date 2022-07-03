@@ -54,24 +54,14 @@ $(document).ready(function () {
 
     });
     
-    $("#btnSubmitLuceneQueryLanguage").click(function (event) {
+    $("#btnPhrase").click(function (event) {
 
         //stop submit the form, we will post it manually.
         event.preventDefault();
 
-        searchLuceneQueryLanguage();
+        searchPhraseSearch();
 
     });
-    
-    $("#btnSubmitLuceneTermQuery").click(function (event) {
-
-        //stop submit the form, we will post it manually.
-        event.preventDefault();
-
-        searchLuceneTermQuery();
-
-    });
-
 });
 
 function uploadData() {
@@ -257,6 +247,37 @@ function searchGeoSearch() {
             $("#result").text(e.responseText);
             console.log("ERROR : ", e);
             $("#btnGeoSearch").prop("disabled", false);
+
+        }
+    });
+}
+
+function searchPhraseSearch() {
+	var field = $('#phrase input[name=field]').val();
+	var value = $('#phrase input[name=value]').val();
+    var data = JSON.stringify({"field":field, "value":value});
+    $("#btnPhrase").prop("disabled", true);
+
+    $.ajax({
+        type: "POST",
+        url: "/search/phrase",
+        data: data,
+        contentType: 'application/json',
+        success: function (data) {
+        	$('#result').empty();
+            for(index = 0; index < data.length; index++){
+                var result = data[index]
+                $('#result').append('<li>' + result + '</li>');
+            }
+            console.log("SUCCESS : ", data);
+            $("#btnPhrase").prop("disabled", false);
+
+        },
+        error: function (e) {
+        	$('#result').empty();
+            $("#result").text(e.responseText);
+            console.log("ERROR : ", e);
+            $("#btnPhrase").prop("disabled", false);
 
         }
     });

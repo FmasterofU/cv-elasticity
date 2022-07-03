@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.elasticsearch.common.geo.GeoPoint;
 
+import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.Field;
+
 
 public interface SearchService {
 
@@ -12,4 +14,5 @@ public interface SearchService {
 	List<String> findAllCVsByTerms(String data) throws Exception;
 	List<String> findAllByBooleanQuery(String data) throws Exception;
 	List<String> findAllByGeoSearch(Integer radius, GeoPoint geo) throws Exception;
+	List<String> findAllByPhraseQuery(Field data) throws Exception;
 }

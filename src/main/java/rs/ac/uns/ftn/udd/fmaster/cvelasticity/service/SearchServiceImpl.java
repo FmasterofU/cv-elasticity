@@ -16,6 +16,7 @@ import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
+import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.Field;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.IndexUnit;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.repository.UnitRepository;
 
@@ -173,6 +175,20 @@ public class SearchServiceImpl implements SearchService {
 	@Override
 	public List<String> findAllByGeoSearch(Integer radius, GeoPoint geo) throws Exception {
 		QueryBuilder queryBuilder = QueryBuilders.geoDistanceQuery("geo").distance(radius, DistanceUnit.KILOMETERS).point(geo.getLat(), geo.getLon());
+		List<IndexUnit> result = search(queryBuilder);
+		List<String> ret = new ArrayList<String>();
+		for(IndexUnit indexUnit : result)
+			ret.add("id: " + hash(indexUnit.getFilename()) + "\nname: " + indexUnit.getName() + "\nsurname: " + indexUnit.getSurname() + "\nlocation: " + indexUnit.getAddress() + ", " + indexUnit.getZipcode() + " " + indexUnit.getCity() + "\nCV: \n" + indexUnit.getCvtext());
+		return ret;
+	}
+
+	@Override
+	public List<String> findAllByPhraseQuery(Field data) throws Exception {
+		QueryBuilder queryBuilder;
+		if(data.getField().contains("."))
+			queryBuilder = QueryBuilders.nestedQuery(data.getField().split("\\.")[0], new MatchPhraseQueryBuilder(data.getField(), data.getValue()), ScoreMode.Avg);
+		else
+			queryBuilder = new MatchPhraseQueryBuilder(data.getField(), data.getValue());
 		List<IndexUnit> result = search(queryBuilder);
 		List<String> ret = new ArrayList<String>();
 		for(IndexUnit indexUnit : result)

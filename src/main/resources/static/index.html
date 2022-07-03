@@ -67,20 +67,12 @@
 		    <input type="submit" value="Submit" id="btnGeoSearch"/>
 		</form>
 		
-		<h1>Search using Lucene query language</h1>
-		
-		<form method="POST" id="luceneQueryLanguage">
-		    <input type="text" name="value" placeholder="query"/><br/><br/>
-		    <input type="submit" value="Submit" id="btnSubmitLuceneQueryLanguage"/>
+		<h1>Phrase Query</h1>
+
+		<form method="POST" id="phrase">
+		    <input type="text" name="field" placeholder="field"/><br/><br/>
+		    <input type="text" name="value" placeholder="value"/><br/><br/>
+		    <input type="submit" value="Submit" id="btnPhrase"/>
 		</form>
-		
-		<h1>Search using Lucene TermQuery</h1>
-		
-		<form method="POST" id="luceneTermQuery">
-			<input type="text" name="field" placeholder="field" /><br/><br/>
-		    <input type="text" name="value" placeholder="value" /><br/><br/>
-		    <input type="submit" value="Submit" id="btnSubmitLuceneTermQuery"/>
-		</form>
-	
 	</body>
 </html>
