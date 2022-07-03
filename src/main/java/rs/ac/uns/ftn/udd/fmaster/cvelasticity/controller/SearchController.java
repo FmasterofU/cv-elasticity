@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.NameAndSurname;
+import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.Education;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.service.SearchService;
 
 @RestController
@@ -23,4 +24,8 @@ public class SearchController {
 		return new ResponseEntity<List<String>>(search.findAllCVsByNameAndSurname(data.getName(), data.getSurname()), HttpStatus.OK);
 	}
 	
+	@PostMapping(value="/search/cv/education", consumes="application/json")
+	public ResponseEntity<List<String>> searchTermQuery(@RequestBody Education data) throws Exception {
+		return new ResponseEntity<List<String>>(search.findAllCVsByEducation(data.getEducationlevel(), data.getEducationgrade()), HttpStatus.OK);
+	}
 }

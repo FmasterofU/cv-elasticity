@@ -17,6 +17,15 @@ $(document).ready(function () {
         searchCvByNameAndSurname();
 
     });
+        
+    $("#btnCvByEducation").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        searchCvByEducation();
+
+    });
     
     $("#btnSubmitLuceneQueryLanguage").click(function (event) {
 
@@ -106,7 +115,36 @@ function searchCvByNameAndSurname() {
     });
 }
 
+function searchCvByEducation() {
+	var educationlevel = $('#cvByEducation input[name=educationlevel]').val();
+	var educationgrade = $('#cvByEducation input[name=educationgrade]').val();
+    var data = JSON.stringify({"educationlevel":educationlevel, "educationgrade":educationgrade});
+    $("#btnCvByEducation").prop("disabled", true);
 
+    $.ajax({
+        type: "POST",
+        url: "/search/cv/education",
+        data: data,
+        contentType: 'application/json',
+        success: function (data) {
+        	$('#result').empty();
+            for(index = 0; index < data.length; index++){
+                var result = data[index]
+                $('#result').append('<li>' + result + '</li>');
+            }
+            console.log("SUCCESS : ", data);
+            $("#btnCvByEducation").prop("disabled", false);
+
+        },
+        error: function (e) {
+        	$('#result').empty();
+            $("#result").text(e.responseText);
+            console.log("ERROR : ", e);
+            $("#btnCvByEducation").prop("disabled", false);
+
+        }
+    });
+}
 
 function searchLuceneQueryLanguage() {
 

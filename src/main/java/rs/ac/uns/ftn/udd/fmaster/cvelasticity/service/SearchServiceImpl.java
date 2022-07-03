@@ -55,4 +55,21 @@ public class SearchServiceImpl implements SearchService {
 		return ret;
 	}
 
+	@Override
+	public List<String> findAllCVsByEducation(String level, String grade) throws Exception {
+		List<IndexUnit> units;
+		if((level == null || level == "") && (grade == null || grade == ""))
+			throw new Exception("Epic Fail! both fields are empty.");
+		else if (level == null || level == "")
+			units = repository.findByEducation_Educationgrade(grade);
+		else if (grade == null || grade == "")
+			units = repository.findByEducation_Educationlevel(level);
+		else
+			units = repository.findByEducation_EducationlevelAndEducation_Educationgrade(level, grade);
+		List<String> ret = new ArrayList<String>();
+		for(IndexUnit indexUnit : units)
+			ret.add("id: " + hash(indexUnit.getFilename()) + "\nname: " + indexUnit.getName() + "\nsurname: " + indexUnit.getSurname() + "\neducation level: " + indexUnit.getEducation().getEducationlevel() + "\neducation grade: " + indexUnit.getEducation().getEducationgrade() + "\nCV: \n" + indexUnit.getCvtext());
+		return ret;
+	}
+
 }

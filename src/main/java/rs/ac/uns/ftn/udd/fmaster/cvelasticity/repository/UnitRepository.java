@@ -15,4 +15,10 @@ public interface UnitRepository extends ElasticsearchRepository<IndexUnit, Strin
 	List<IndexUnit> findByNameAndSurname(String name, String surname);
 
 	IndexUnit findByFilename(String filename);
+	
+	List<IndexUnit> findByEducation_Educationgrade(String educationgrade);
+	
+	List<IndexUnit> findByEducation_Educationlevel(String educationlevel);
+	
+	List<IndexUnit> findByEducation_EducationlevelAndEducation_Educationgrade(String educationlevel, String educationgrade);
 }
