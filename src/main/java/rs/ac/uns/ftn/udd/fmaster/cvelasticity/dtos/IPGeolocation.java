@@ -1,5 +1,8 @@
 package rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class IPGeolocation {
 
 	private Double longitude;

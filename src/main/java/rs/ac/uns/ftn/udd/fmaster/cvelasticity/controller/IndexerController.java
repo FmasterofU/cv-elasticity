@@ -121,6 +121,7 @@ public class IndexerController {
 	            	indexUnit.setIp(model.getIp());
 	            	indexUnit = indexUnitService.recalculateIndexUnitFields(indexUnit);
 	            	indexer.add(indexUnit);
+	            	break;
 	            }
 	    	}
 	    }

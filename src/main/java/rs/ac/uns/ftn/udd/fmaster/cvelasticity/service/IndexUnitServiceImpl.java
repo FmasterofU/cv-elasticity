@@ -21,9 +21,9 @@ public class IndexUnitServiceImpl implements IndexUnitService {
 
 	public IndexUnit calculateGeolocatedLongLat(IndexUnit unit) {
 		OkHttpClient client = new OkHttpClient();
-
+		System.out.println(unit.getIp());
 		Request request = new Request.Builder()
-			.url("https://ip-geolocation-ipwhois-io.p.rapidapi.com/json/?ip=" + unit.getIp())
+			.url("https://ip-geolocation-ipwhois-io.p.rapidapi.com/json/?ip=" + "133.133.133.133")
 			.get()
 			.addHeader("X-RapidAPI-Key", "728cbcd951msh66588696af0f8acp1e144fjsn362b114c907e")
 			.addHeader("X-RapidAPI-Host", "ip-geolocation-ipwhois-io.p.rapidapi.com")
@@ -39,8 +39,11 @@ public class IndexUnitServiceImpl implements IndexUnitService {
 		
 		ObjectMapper mapper = new ObjectMapper();
 		IPGeolocation result;
+		String temp;
 		try {
-			result = mapper.readValue(response.body().string(), IPGeolocation.class);
+			temp = response.body().string();
+			System.out.println(temp);
+			result = mapper.readValue(temp, IPGeolocation.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return unit;
@@ -57,8 +60,10 @@ public class IndexUnitServiceImpl implements IndexUnitService {
 
 		Request request;
 		try {
+			String encodedAddr = URLEncoder.encode(unit.getAddress() + ", " + unit.getZipcode() + " " + unit.getCity(), StandardCharsets.UTF_8.toString()).replace("+", "%20");
+			System.out.println(encodedAddr);
 			request = new Request.Builder()
-				.url("https://forward-reverse-geocoding.p.rapidapi.com/v1/search?q=" + URLEncoder.encode(unit.getAddress() + ", " + unit.getZipcode() + " " + unit.getCity(), StandardCharsets.UTF_8.toString()))
+				.url("https://forward-reverse-geocoding.p.rapidapi.com/v1/search?q=" + encodedAddr + "&accept-language=en&polygon_threshold=0.0")
 				.get()
 				.addHeader("X-RapidAPI-Key", "728cbcd951msh66588696af0f8acp1e144fjsn362b114c907e")
 				.addHeader("X-RapidAPI-Host", "forward-reverse-geocoding.p.rapidapi.com")
@@ -77,16 +82,24 @@ public class IndexUnitServiceImpl implements IndexUnitService {
 		}
 		
 		ObjectMapper mapper = new ObjectMapper();
-		AddressGeocoding result;
+		AddressGeocoding[] result;
+		String temp;
 		try {
-			result = mapper.readValue(response.body().string(), AddressGeocoding.class);
+			temp = response.body().string();
+			System.out.println(temp);
+			result = mapper.readValue(temp, AddressGeocoding[].class);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return unit;
 		}
 		
-		unit.setLongitude(Double.parseDouble(result.getLon()));
-		unit.setLatitude(Double.parseDouble(result.getLat()));
+		try {
+			unit.setLongitude(Double.parseDouble(result[0].getLon()));
+			unit.setLatitude(Double.parseDouble(result[0].getLat()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return unit;
+		}
 		
 		return unit;
 	}
