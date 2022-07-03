@@ -6,13 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpHost;
+import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -112,6 +115,56 @@ public class SearchServiceImpl implements SearchService {
 		for(SearchHit hit : searchHits)
 			units.add(new ObjectMapper().convertValue(hit.getSourceAsMap(), IndexUnit.class));
 		return units;
+	}
+	
+	
+	private QueryBuilder queryBuilderFromParams(String params) throws Exception {
+		String[] param = params.trim().split(":");
+		if(param.length!=2) throw new Exception("Neispravan query");
+		if(param[0] == "cvtext"){
+			QueryStringQueryBuilder queryBuilder = new QueryStringQueryBuilder(param[1]);
+			queryBuilder.defaultField("cvtext");
+			queryBuilder.defaultOperator(Operator.AND);
+			return queryBuilder;
+		} else if (param[0].contains(".")) {
+			return QueryBuilders.nestedQuery(param[0].split("\\.")[0], QueryBuilders.matchQuery(param[0], param[1]), ScoreMode.Avg);
+		} else {
+			QueryBuilder queryBuilder = QueryBuilders.matchQuery(param[0], param[1]);
+			return queryBuilder;
+		}
+	}
+
+	private QueryBuilder andQueryBuilder(String data) throws Exception {
+		BoolQueryBuilder queryBuilder = new BoolQueryBuilder();
+		String[] ands = data.toLowerCase().trim().split(" && ");
+		if(ands.length!=1)
+			for(String and : ands)
+				queryBuilder.must(queryBuilderFromParams(and));
+		else
+			return queryBuilderFromParams(ands[0].trim());
+		return queryBuilder;
+	}
+	
+	private QueryBuilder orAndQueryBuilder(String data) throws Exception {
+		BoolQueryBuilder queryBuilder = new BoolQueryBuilder();
+		data = data.toLowerCase().trim();
+		String[] ors = data.split(" \\|\\| ");
+		if(ors.length!=1)
+			for(String or : ors)
+				queryBuilder.should(andQueryBuilder(or.trim()));
+		else
+			return andQueryBuilder(ors[0].trim());
+		return queryBuilder;
+	}
+	
+	@Override
+	public List<String> findAllByBooleanQuery(String data) throws Exception {
+		QueryBuilder queryBuilder = orAndQueryBuilder(data);
+		List<IndexUnit> result = search(queryBuilder);
+		List<String> ret = new ArrayList<String>();
+		for(IndexUnit indexUnit : result)
+			ret.add("id: " + hash(indexUnit.getFilename()) + "\nname: " + indexUnit.getName() + "\nsurname: " + indexUnit.getSurname() + "\neducation level: " + indexUnit.getEducation().getEducationlevel() + "\neducation grade: " + indexUnit.getEducation().getEducationgrade() + "\nCV: \n" + indexUnit.getCvtext());
+		return ret;
 	}
 
 }

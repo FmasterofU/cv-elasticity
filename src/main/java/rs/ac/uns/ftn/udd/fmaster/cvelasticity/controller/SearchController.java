@@ -33,4 +33,9 @@ public class SearchController {
 	public ResponseEntity<List<String>> searchCV(@RequestBody String data) throws Exception {
 		return new ResponseEntity<List<String>>(search.findAllCVsByTerms(data), HttpStatus.OK);
 	}
+	
+	@PostMapping(value="/search/bool", consumes="application/json")
+	public ResponseEntity<List<String>> searchBool(@RequestBody String data) throws Exception {
+		return new ResponseEntity<List<String>>(search.findAllByBooleanQuery(data), HttpStatus.OK);
+	}
 }

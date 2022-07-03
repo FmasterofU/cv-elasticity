@@ -36,6 +36,15 @@ $(document).ready(function () {
 
     });
     
+    $("#btnComplexQuery").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        searchComplexQuery();
+
+    });
+    
     $("#btnSubmitLuceneQueryLanguage").click(function (event) {
 
         //stop submit the form, we will post it manually.
@@ -179,6 +188,35 @@ function searchCvByTerms() {
             $("#result").text(e.responseText);
             console.log("ERROR : ", e);
             $("#btnCvByTerms").prop("disabled", false);
+
+        }
+    });
+}
+
+function searchComplexQuery() {
+	var data = $('#complexQuery input[name=query]').val();
+    $("#btnComplexQuery").prop("disabled", true);
+
+    $.ajax({
+        type: "POST",
+        url: "/search/bool",
+        data: data,
+        contentType: 'application/json',
+        success: function (data) {
+        	$('#result').empty();
+            for(index = 0; index < data.length; index++){
+                var result = data[index]
+                $('#result').append('<li>' + result + '</li>');
+            }
+            console.log("SUCCESS : ", data);
+            $("#btnComplexQuery").prop("disabled", false);
+
+        },
+        error: function (e) {
+        	$('#result').empty();
+            $("#result").text(e.responseText);
+            console.log("ERROR : ", e);
+            $("#btnComplexQuery").prop("disabled", false);
 
         }
     });
