@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import okhttp3.OkHttpClient;
@@ -14,6 +16,7 @@ import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.AddressGeocoding;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.IPGeolocation;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.IndexUnit;
 
+@Service
 public class IndexUnitServiceImpl implements IndexUnitService {
 
 	public IndexUnit calculateGeolocatedLongLat(IndexUnit unit) {

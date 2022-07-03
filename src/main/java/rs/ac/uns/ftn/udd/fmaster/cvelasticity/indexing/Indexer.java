@@ -1,7 +1,5 @@
 package rs.ac.uns.ftn.udd.fmaster.cvelasticity.indexing;
 
-import java.io.File;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +18,9 @@ public class Indexer {
 	public Indexer() {
 	}
 	
-	
 	public boolean delete(String filename){
 		if(repository.equals(filename)){
-			repository.delete(filename);
+			repository.deleteById(filename);
 			return true;
 		} else
 			return false;
@@ -39,7 +36,7 @@ public class Indexer {
 	}
 	
 	public boolean add(IndexUnit unit){
-		unit = repository.index(unit);
+		unit = repository.save(unit);
 		if(unit!=null)
 			return true;
 		else
@@ -50,7 +47,7 @@ public class Indexer {
 	 * 
 	 * @param file Direktorijum u kojem se nalaze dokumenti koje treba indeksirati
 	 */
-	public int index(File file){		
+/*	public int index(File file){		
 		DocumentHandler handler = null;
 		String fileName = null;
 		int retVal = 0;
@@ -82,7 +79,7 @@ public class Indexer {
 		}
 		return retVal;
 	}
-	
+	*/
 
 	public DocumentHandler getHandler(String fileName){
 		if(fileName.endsWith(".pdf")){

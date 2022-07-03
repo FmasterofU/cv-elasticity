@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.UploadModel;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.indexing.Indexer;
+import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.Education;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.IndexUnit;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.service.IndexUnitService;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.service.RequestService;
@@ -110,7 +111,10 @@ public class IndexerController {
 	            	indexUnit.setName(model.getName());
 	            	indexUnit.setSurname(model.getSurname());
 	            	indexUnit.setEmail(model.getEmail());
-	            	indexUnit.setEducation(model.getEducation());
+	            	Education education = new Education();
+	            	education.setEducationgrade(model.getEducationgrade());
+	            	education.setEducationlevel(model.getEducationlevel());
+	            	indexUnit.setEducation(education);
 	            	indexUnit.setAddress(model.getAddress());
 	            	indexUnit.setCity(model.getCity());
 	            	indexUnit.setZipcode(model.getZipcode());

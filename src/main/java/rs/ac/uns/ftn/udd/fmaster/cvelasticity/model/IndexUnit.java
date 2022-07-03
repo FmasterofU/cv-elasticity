@@ -3,10 +3,9 @@ package rs.ac.uns.ftn.udd.fmaster.cvelasticity.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-@Document(indexName = IndexUnit.INDEX_NAME, type = IndexUnit.TYPE_NAME, shards = 1, replicas = 0)
+@Document(indexName = IndexUnit.INDEX_NAME, shards = 1, replicas = 0)
 public class IndexUnit {
 
 	public static final String INDEX_NAME = "applicationlibrary";
@@ -14,47 +13,47 @@ public class IndexUnit {
 	
 	public static final String DATE_PATTERN = "yyyy-MM-dd";
 	
-	@Field(analyzer = "serbian", type = FieldType.String, index = FieldIndex.analyzed, store = true)
+	@Field(analyzer = "serbian", searchAnalyzer = "serbian", type = FieldType.Text, store = true)
 	private String name;
 	
-	@Field(analyzer = "serbian", type = FieldType.String, index = FieldIndex.analyzed, store = true)
+	@Field(analyzer = "serbian", searchAnalyzer = "serbian", type = FieldType.Text, store = true)
 	private String surname;
 	
-	@Field(analyzer = "serbian", type = FieldType.String, index = FieldIndex.analyzed, store = true)
+	@Field(analyzer = "serbian", searchAnalyzer = "serbian", type = FieldType.Text, store = true)
 	private String email;
 	
-	@Field(analyzer = "serbian", type = FieldType.Nested, index = FieldIndex.analyzed, store = true)
+	@Field(analyzer = "serbian", searchAnalyzer = "serbian", type = FieldType.Nested, store = true)
 	private Education education;
 	
-	@Field(type = FieldType.Double, index = FieldIndex.analyzed, store = true)
+	@Field(type = FieldType.Double, store = true)
 	private Double latitude;
 	
-	@Field(type = FieldType.Double, index = FieldIndex.analyzed, store = true)
+	@Field(type = FieldType.Double, store = true)
 	private Double longitude;
 	
-	@Field(analyzer = "serbian", type = FieldType.String, index = FieldIndex.analyzed, store = true)
+	@Field(analyzer = "serbian", searchAnalyzer = "serbian", type = FieldType.Text, store = true)
 	private String cvtext;
 	
 	@Id
-	@Field(type = FieldType.String, index = FieldIndex.not_analyzed, store = true)
+	@Field(type = FieldType.Text, searchAnalyzer = "serbian", store = true)
 	private String filename;
 	
-	@Field(type = FieldType.Double, index = FieldIndex.analyzed, store = true)
+	@Field(type = FieldType.Double, store = true)
 	private Double iplatitude;
 	
-	@Field(type = FieldType.Double, index = FieldIndex.analyzed, store = true)
+	@Field(type = FieldType.Double, store = true)
 	private Double iplongitude;
 	
-	@Field(type = FieldType.String, index = FieldIndex.not_analyzed, store = true)
+	@Field(type = FieldType.Text, store = true)
 	private String ip;
 	
-	@Field(analyzer = "serbian", type = FieldType.String, index = FieldIndex.not_analyzed, store = true)
+	@Field(analyzer = "serbian", searchAnalyzer = "serbian", type = FieldType.Text, store = true)
 	private String address;
 	
-	@Field(analyzer = "serbian", type = FieldType.String, index = FieldIndex.not_analyzed, store = true)
+	@Field(analyzer = "serbian", searchAnalyzer = "serbian", type = FieldType.Text, store = true)
 	private String city;
 	
-	@Field(type = FieldType.String, index = FieldIndex.not_analyzed, store = true)
+	@Field(type = FieldType.Text, store = true)
 	private String zipcode;
 
 	public String getIp() {

@@ -24,4 +24,25 @@ public class UploadModel extends IndexUnit {
                 ", files=" + Arrays.toString(files) +
                 '}';
     }
+    
+	private String educationlevel;
+	
+	private String educationgrade;
+
+	public String getEducationlevel() {
+		return educationlevel;
+	}
+
+	public void setEducationlevel(String educationlevel) {
+		this.educationlevel = educationlevel;
+	}
+
+	public String getEducationgrade() {
+		return educationgrade;
+	}
+
+	public void setEducationgrade(String educationgrade) {
+		this.educationgrade = educationgrade;
+	}
+    
 }
