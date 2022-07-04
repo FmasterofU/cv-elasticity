@@ -15,4 +15,5 @@ public interface SearchService {
 	List<String> findAllByBooleanQuery(String data) throws Exception;
 	List<String> findAllByGeoSearch(Integer radius, GeoPoint geo) throws Exception;
 	List<String> findAllByPhraseQuery(Field data) throws Exception;
+	List<String> findAllCVsByTermsHighlight(String data) throws Exception;
 }

@@ -36,6 +36,15 @@ $(document).ready(function () {
 
     });
     
+    $("#btnCvByTermsHighlight").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        searchCvByTermsHighlight();
+
+    });
+    
     $("#btnComplexQuery").click(function (event) {
 
         //stop submit the form, we will post it manually.
@@ -352,4 +361,33 @@ function searchLuceneTermQuery() {
         }
     });
 
+}
+
+function searchCvByTermsHighlight() {
+	var data = $('#cvByTermsHighlight input[name=terms]').val();
+    $("#btnCvByTermsHighlight").prop("disabled", true);
+
+    $.ajax({
+        type: "POST",
+        url: "/search/cv/terms/highlight",
+        data: data,
+        contentType: 'application/json',
+        success: function (data) {
+        	$('#result').empty();
+            for(index = 0; index < data.length; index++){
+                var result = data[index]
+                $('#result').append('<li>' + result + '</li>');
+            }
+            console.log("SUCCESS : ", data);
+            $("#btnCvByTermsHighlight").prop("disabled", false);
+
+        },
+        error: function (e) {
+        	$('#result').empty();
+            $("#result").text(e.responseText);
+            console.log("ERROR : ", e);
+            $("#btnCvByTermsHighlight").prop("disabled", false);
+
+        }
+    });
 }

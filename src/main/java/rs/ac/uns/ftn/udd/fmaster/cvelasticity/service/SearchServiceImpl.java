@@ -23,12 +23,17 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.Field;
+import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.HighlightedIndexUnit;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.IndexUnit;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.repository.UnitRepository;
 
@@ -192,7 +197,39 @@ public class SearchServiceImpl implements SearchService {
 		List<IndexUnit> result = search(queryBuilder);
 		List<String> ret = new ArrayList<String>();
 		for(IndexUnit indexUnit : result)
-			ret.add("id: " + hash(indexUnit.getFilename()) + "\nname: " + indexUnit.getName() + "\nsurname: " + indexUnit.getSurname() + "\nlocation: " + indexUnit.getAddress() + ", " + indexUnit.getZipcode() + " " + indexUnit.getCity() + "\nCV: \n" + indexUnit.getCvtext());
+			ret.add("id: " + hash(indexUnit.getFilename()) + "\nname: " + indexUnit.getName() + "\nsurname: " + indexUnit.getSurname() + "\nemail: " + indexUnit.getEmail() + "\neducation level: " + indexUnit.getEducation().getEducationlevel() + "\neducation grade: " + indexUnit.getEducation().getEducationgrade() + "\nlocation: " + indexUnit.getAddress() + ", " + indexUnit.getZipcode() + " " + indexUnit.getCity() + "\nCV: \n" + indexUnit.getCvtext());
+		return ret;
+	}
+
+	private List<HighlightedIndexUnit> searchHighlight(QueryBuilder queryBuilder, String field) throws Exception {
+		ArrayList<HighlightedIndexUnit> units = new ArrayList<HighlightedIndexUnit>();
+		SearchRequest searchRequest = new SearchRequest(IndexUnit.INDEX_NAME);
+		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+		sourceBuilder.query(queryBuilder);
+		sourceBuilder.highlighter(new HighlightBuilder());
+		sourceBuilder.highlighter().field(field);
+		searchRequest.source(sourceBuilder);
+		SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+		SearchHit[] searchHits = searchResponse.getHits().getHits();
+		for(SearchHit hit : searchHits) {
+			HighlightedIndexUnit temp = new ObjectMapper().convertValue(hit.getSourceAsMap(), HighlightedIndexUnit.class);
+			HighlightField hf = hit.getHighlightFields().get(field);
+			if(hf != null) temp.setHighlight(hf.fragments()[0].toString());
+			units.add(temp);
+		}
+		return units;
+	}
+	
+	
+	@Override
+	public List<String> findAllCVsByTermsHighlight(String data) throws Exception {
+		QueryStringQueryBuilder queryBuilder = new QueryStringQueryBuilder(data);
+		queryBuilder.defaultField("cvtext");
+		queryBuilder.defaultOperator(Operator.AND);		
+		List<HighlightedIndexUnit> result = searchHighlight(queryBuilder, "cvtext");
+		List<String> ret = new ArrayList<String>();
+		for(HighlightedIndexUnit indexUnit : result)
+			ret.add("id: " + hash(indexUnit.getFilename()) + "\nname: " + indexUnit.getName() + "\nsurname: " + indexUnit.getSurname() + "\nCV: \n" + indexUnit.getCvtext() + "\nCV HIGHLIGHT: " + indexUnit.getHighlight());
 		return ret;
 	}
 

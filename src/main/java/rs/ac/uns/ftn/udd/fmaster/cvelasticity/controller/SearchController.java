@@ -58,4 +58,9 @@ public class SearchController {
 	public ResponseEntity<List<String>> searchPhrase(@RequestBody Field data) throws Exception {
 		return new ResponseEntity<List<String>>(search.findAllByPhraseQuery(data), HttpStatus.OK);
 	}
+	
+	@PostMapping(value="/search/cv/terms/highlight", consumes="application/json")
+	public ResponseEntity<List<String>> searchCVHighlight(@RequestBody String data) throws Exception {
+		return new ResponseEntity<List<String>>(search.findAllCVsByTermsHighlight(data), HttpStatus.OK);
+	}
 }
