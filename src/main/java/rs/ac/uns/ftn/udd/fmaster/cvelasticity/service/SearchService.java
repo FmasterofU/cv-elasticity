@@ -17,4 +17,5 @@ public interface SearchService {
 	List<String> findAllByPhraseQuery(Field data) throws Exception;
 	List<String> findAllCVsByTermsHighlight(String data) throws Exception;
 	List<String> findAllByPhraseQueryHighlight(Field data) throws Exception;
+	List<String> findCityStat1() throws Exception;
 }

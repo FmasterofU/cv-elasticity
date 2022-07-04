@@ -3,7 +3,14 @@ package rs.ac.uns.ftn.udd.fmaster.cvelasticity.service;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.http.HttpHost;
 import org.apache.lucene.search.join.ScoreMode;
@@ -26,6 +33,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
@@ -43,6 +51,8 @@ public class SearchServiceImpl implements SearchService {
 
 	@Autowired
 	UnitRepository repository;
+	@Autowired
+	IndexUnitService indexUnitService;
 	
 	private RestHighLevelClient client = new RestHighLevelClient(
 			RestClient.builder(new HttpHost("localhost", 9200, "http"), new HttpHost("localhost", 9300, "http")));;
@@ -247,4 +257,29 @@ public class SearchServiceImpl implements SearchService {
 		return ret;
 	}
 
+	@Override
+	public List<String> findCityStat1() throws Exception {
+		List<IndexUnit> units = new ArrayList<IndexUnit>();
+		repository.findAll().forEach(units::add);
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		for(IndexUnit unit : units) {
+			String city = indexUnitService.reverseGeocodeCity(unit.getGeo().getLat(), unit.getGeo().getLon());
+			if(map.get(city) != null)
+				map.put(city, map.get(map) + 1);
+			else
+				map.put(city, 1);
+		}
+		List<Map.Entry<String, Integer>> entries = new ArrayList<>(map.entrySet());
+	    Collections.sort(entries, new Comparator<Entry<String, Integer>>() {
+	        @Override
+	        public int compare(
+	          Entry<String, Integer> o1, Entry<String, Integer> o2) {
+	            return o1.getValue().compareTo(o2.getValue());
+	        }
+	    });
+	    String maxCity = entries.get(entries.size()-1).getKey() + " : " + entries.get(entries.size()-1).getValue();
+	    List<String> ret = new ArrayList<String>();
+	    ret.add(maxCity);
+	    return ret;
+	}
 }

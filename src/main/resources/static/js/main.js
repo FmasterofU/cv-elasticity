@@ -80,6 +80,15 @@ $(document).ready(function () {
         searchPhraseHighlightSearch();
 
     });
+    
+    $("#btnCityStat").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        searchCityStatSearch();
+
+    });
 });
 
 function uploadData() {
@@ -356,6 +365,34 @@ function searchPhraseHighlightSearch() {
             $("#result").text(e.responseText);
             console.log("ERROR : ", e);
             $("#btnPhraseHighlight").prop("disabled", false);
+
+        }
+    });
+}
+
+function searchCityStatSearch() {
+    $("#btnCityStat").prop("disabled", true);
+
+    $.ajax({
+        type: "POST",
+        url: "/stat/city",
+        data: "",
+        contentType: 'application/json',
+        success: function (data) {
+        	$('#result').empty();
+            for(index = 0; index < data.length; index++){
+                var result = data[index]
+                $('#result').append('<li>' + result + '</li>');
+            }
+            console.log("SUCCESS : ", data);
+            $("#btnCityStat").prop("disabled", false);
+
+        },
+        error: function (e) {
+        	$('#result').empty();
+            $("#result").text(e.responseText);
+            console.log("ERROR : ", e);
+            $("#btnCityStat").prop("disabled", false);
 
         }
     });

@@ -15,6 +15,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.AddressGeocoding;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.IPGeolocation;
+import rs.ac.uns.ftn.udd.fmaster.cvelasticity.dtos.ReverseGeocoding;
 import rs.ac.uns.ftn.udd.fmaster.cvelasticity.model.IndexUnit;
 
 @Service
@@ -108,6 +109,41 @@ public class IndexUnitServiceImpl implements IndexUnitService {
 		unit = calculateGeolocatedLongLat(unit);
 		unit = calculateGeocodedLongLat(unit);
 		return unit;
+	}
+
+	@Override
+	public String reverseGeocodeCity(Double lat, Double lon) {
+		OkHttpClient client = new OkHttpClient();
+
+		System.out.println("lat=" + Double.toString(lat) + "lon=" + Double.toString(lon));
+		Request request = new Request.Builder()
+			.url("https://forward-reverse-geocoding.p.rapidapi.com/v1/reverse?lat=" + Double.toString(lat) + "&lon=" + Double.toString(lon) + "&accept-language=en&polygon_threshold=0.0")
+			.get()
+			.addHeader("X-RapidAPI-Key", "728cbcd951msh66588696af0f8acp1e144fjsn362b114c907e")
+			.addHeader("X-RapidAPI-Host", "forward-reverse-geocoding.p.rapidapi.com")
+			.build();
+
+		Response response;
+		try {
+			response = client.newCall(request).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		ReverseGeocoding result;
+		String temp;
+		try {
+			temp = response.body().string();
+			System.out.println(temp);
+			result = mapper.readValue(temp, ReverseGeocoding.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return result.getAddress().getCity();
 	}
 
 }
