@@ -233,4 +233,18 @@ public class SearchServiceImpl implements SearchService {
 		return ret;
 	}
 
+	@Override
+	public List<String> findAllByPhraseQueryHighlight(Field data) throws Exception {
+		QueryBuilder queryBuilder;
+		if(data.getField().contains("."))
+			queryBuilder = QueryBuilders.nestedQuery(data.getField().split("\\.")[0], new MatchPhraseQueryBuilder(data.getField(), data.getValue()), ScoreMode.Avg);
+		else
+			queryBuilder = new MatchPhraseQueryBuilder(data.getField(), data.getValue());
+		List<HighlightedIndexUnit> result = searchHighlight(queryBuilder, data.getField());
+		List<String> ret = new ArrayList<String>();
+		for(HighlightedIndexUnit indexUnit : result)
+			ret.add("id: " + hash(indexUnit.getFilename()) + "\nname: " + indexUnit.getName() + "\nsurname: " + indexUnit.getSurname() + "\nemail: " + indexUnit.getEmail() + "\neducation level: " + indexUnit.getEducation().getEducationlevel() + "\neducation grade: " + indexUnit.getEducation().getEducationgrade() + "\nlocation: " + indexUnit.getAddress() + ", " + indexUnit.getZipcode() + " " + indexUnit.getCity() + "\nCV: \n" + indexUnit.getCvtext() + "\n" + data.getField() + " HIGHLIGHT: " + indexUnit.getHighlight());
+		return ret;
+	}
+
 }

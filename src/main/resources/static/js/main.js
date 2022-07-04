@@ -71,6 +71,15 @@ $(document).ready(function () {
         searchPhraseSearch();
 
     });
+    
+    $("#btnPhraseHighlight").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        searchPhraseHighlightSearch();
+
+    });
 });
 
 function uploadData() {
@@ -292,77 +301,6 @@ function searchPhraseSearch() {
     });
 }
 
-function searchLuceneQueryLanguage() {
-
-    var value = $('#luceneQueryLanguage input[name=value]').val();
-    var data = JSON.stringify({"value":value});
-    $("#btnSubmitLuceneQueryLanguage").prop("disabled", true);
-
-    $.ajax({
-        type: "POST",
-        url: "/search/queryParser",
-        data: data,
-        contentType: 'application/json',
-        success: function (data) {
-        	$('#result').empty();
-            for(index = 0; index < data.length; index++){
-                var result = data[index]
-                $.each(result, function(key, value) {
-                  $('#result').append('<li>' + key + ': ' + value + '</li>');
-                });
-            }
-            console.log("SUCCESS : ", data);
-            $("#btnSubmitLuceneQueryLanguage").prop("disabled", false);
-
-        },
-        error: function (e) {
-        	$('#result').empty();
-            $("#result").text(e.responseText);
-            console.log("ERROR : ", e);
-            $("#btnSubmitLuceneQueryLanguage").prop("disabled", false);
-
-        }
-    });
-
-}
-
-function searchLuceneTermQuery() {
-
-    var field = $('#luceneTermQuery input[name=field]').val();
-    var value = $('#luceneTermQuery input[name=value]').val();
-    var data = JSON.stringify({"field":field, "value":value});
-   
-    $("#btnSubmitLuceneTermQuery").prop("disabled", true);
-
-    $.ajax({
-        type: "POST",
-        url: "/search/term",
-        data: data,
-        contentType: 'application/json',
-        success: function (data) {
-
-        	$('#result').empty();
-            for(index = 0; index < data.length; index++){
-                var result = data[index]
-                $.each(result, function(key, value) {
-                  $('#result').append('<li>' + key + ': ' + value + '</li>');
-                });
-            }
-            console.log("SUCCESS : ", data);
-            $("#btnSubmitLuceneTermQuery").prop("disabled", false);
-
-        },
-        error: function (e) {
-        	$('#result').empty();
-            $("#result").text(e.responseText);
-            console.log("ERROR : ", e);
-            $("#btnSubmitLuceneTermQuery").prop("disabled", false);
-
-        }
-    });
-
-}
-
 function searchCvByTermsHighlight() {
 	var data = $('#cvByTermsHighlight input[name=terms]').val();
     $("#btnCvByTermsHighlight").prop("disabled", true);
@@ -387,6 +325,37 @@ function searchCvByTermsHighlight() {
             $("#result").text(e.responseText);
             console.log("ERROR : ", e);
             $("#btnCvByTermsHighlight").prop("disabled", false);
+
+        }
+    });
+}
+
+function searchPhraseHighlightSearch() {
+	var field = $('#phraseHighlight input[name=field]').val();
+	var value = $('#phraseHighlight input[name=value]').val();
+    var data = JSON.stringify({"field":field, "value":value});
+    $("#btnPhraseHighlight").prop("disabled", true);
+
+    $.ajax({
+        type: "POST",
+        url: "/search/phrase/highlight",
+        data: data,
+        contentType: 'application/json',
+        success: function (data) {
+        	$('#result').empty();
+            for(index = 0; index < data.length; index++){
+                var result = data[index]
+                $('#result').append('<li>' + result + '</li>');
+            }
+            console.log("SUCCESS : ", data);
+            $("#btnPhraseHighlight").prop("disabled", false);
+
+        },
+        error: function (e) {
+        	$('#result').empty();
+            $("#result").text(e.responseText);
+            console.log("ERROR : ", e);
+            $("#btnPhraseHighlight").prop("disabled", false);
 
         }
     });
